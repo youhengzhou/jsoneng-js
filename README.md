@@ -1,8 +1,8 @@
 # JSON Database Engine JavaScript Edition
 
-This is a json database create, read, update, delete engine for JavaScript. It is useful for saving text, logs, and data to a local cold storage, for debugging or quickly create lightweight database applications.
+This is a json database create, read, update, delete engine for JavaScript. It is useful for saving text, logs, and data to a local cold storage, best used for debugging or quickly create lightweight database applications.
 
-Please refer to: https://www.npmjs.com/package/jsoneng for NPM package
+Please refer to: https://www.npmjs.com/package/jsoneng for the NPM package
 
 All the default use cases, `create`, `read`, `update`, `delete`
 
@@ -15,3 +15,5 @@ Create a mock database with character names as the mock generated data
 Mock generated data in the created `jdb.json` file
 
 ![image](https://user-images.githubusercontent.com/60205850/205467764-7ad3874c-2825-4184-bf93-7457678f0e45.png)
+
+Feel free to use `npm i jsoneng -U` to use, and I welcome you to leave your thoughts and suggestions on the issues tab!
