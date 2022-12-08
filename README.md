@@ -8,7 +8,7 @@ Please refer to: https://github.com/youhengzhou/sample-jsoneng-tutorial for a No
 
 Please refer to: https://www.npmjs.com/package/jsoneng for the NPM package
 
-All the default use cases, `create`, `read`, `update`, `delete`, `print`
+All the default use cases, `create`, `read`, `update`, `delete`, `print` that uses jdb as the default database folder name.
 
 ![image](https://user-images.githubusercontent.com/60205850/206524739-1880cf8c-b2b5-4228-af04-1017851da14c.png)
 
