@@ -2,6 +2,10 @@
 
 This is a json database create, read, update, delete engine for JavaScript. It is useful for saving text, logs, and data to a local cold storage, best used for debugging or quickly create lightweight database applications.
 
+Please refer to: https://github.com/youhengzhou/jsoneng-js for the Github project repo
+
+Please refer to: https://github.com/youhengzhou/sample-jsoneng-tutorial for a NodeJS express to html communication usage tutorial
+
 Please refer to: https://www.npmjs.com/package/jsoneng for the NPM package
 
 All the default use cases, `create`, `read`, `update`, `delete`
