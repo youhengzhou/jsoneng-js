@@ -1,3 +1,22 @@
+/*
+ * jsoneng
+ * Copyright(c) YouHeng Zhou
+ * MIT Licensed
+ */
+
+/*
+ * Current way of using jsoneng
+ *
+ * const dirname = path.join(process.cwd());
+ * let jdb = new jsoneng(path.join(dirname, "jdb"));
+ *
+ * jdb.create({key: value}, "db");
+ * jdb.read("db");
+ * jdb.update({newKey: newValue}, "db");
+ * jdb.delete("db");
+ * jdb.print("db");
+ */
+
 const path = require("path");
 const fs = require("fs");
 
