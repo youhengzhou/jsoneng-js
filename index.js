@@ -33,7 +33,7 @@ class JDB {
         this.directDir = path.join(this.baseDir, dirname);
     };
 
-    create = (input, dirname) => {
+    create = (input, dirname = "") => {
         this.setDirectDir(dirname);
         if (!fs.existsSync(this.directDir)) {
             fs.mkdirSync(this.directDir, { recursive: true });
@@ -43,7 +43,7 @@ class JDB {
             JSON.stringify(input, null, 4)
         );
     };
-    read = (dirname) => {
+    read = (dirname = "") => {
         this.setDirectDir(dirname);
         if (fs.existsSync(this.directDir)) {
             return JSON.parse(
@@ -53,7 +53,7 @@ class JDB {
             return "Database not found";
         }
     };
-    update = (input, dirname) => {
+    update = (input, dirname = "") => {
         this.setDirectDir(dirname);
         if (fs.existsSync(this.directDir)) {
             fs.writeFileSync(
@@ -68,7 +68,7 @@ class JDB {
             return "Database not found";
         }
     };
-    u = (key, value, dirname) => {
+    u = (key, value, dirname = "") => {
         this.update({ [key]: value }, dirname);
     };
     delete = (dirname) => {
@@ -79,7 +79,7 @@ class JDB {
             return "Database not found";
         }
     };
-    d = (key, dirname) => {
+    d = (key, dirname = "") => {
         let prev = this.read(dirname);
         if (key in prev) {
             delete prev[key];
@@ -88,7 +88,7 @@ class JDB {
             return "Key not found";
         }
     };
-    print = (dirname) => {
+    print = (dirname = "") => {
         this.setDirectDir(dirname);
         if (fs.existsSync(this.directDir)) {
             console.log(
