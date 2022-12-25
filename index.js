@@ -1,42 +1,63 @@
+const path = require("path");
 const fs = require("fs");
 
 class JDB {
-    create = (input, location) => {
-        if (!fs.existsSync(location)) {
-            fs.mkdirSync(location, { recursive: true });
+    constructor(baseDir) {
+        this.baseDir = baseDir;
+    }
+
+    directDir = "";
+    setDirectDir = (dirname) => {
+        this.directDir = path.join(this.baseDir, dirname);
+    };
+
+    create = (input, dirname) => {
+        this.setDirectDir(dirname);
+        if (!fs.existsSync(this.directDir)) {
+            fs.mkdirSync(this.directDir, { recursive: true });
         }
         fs.writeFileSync(
-            location + "/jdb.json",
+            path.join(this.directDir, "jdb.json"),
             JSON.stringify(input, null, 4)
         );
     };
-    read = (location) => {
-        if (fs.existsSync(location)) {
-            return JSON.parse(fs.readFileSync(location + "/jdb.json"));
+    read = (dirname) => {
+        this.setDirectDir(dirname);
+        if (fs.existsSync(this.directDir)) {
+            return JSON.parse(
+                fs.readFileSync(path.join(this.directDir, "jdb.json"))
+            );
         } else {
             return "Database not found";
         }
     };
-    update = (input, location) => {
-        if (fs.existsSync(location)) {
+    update = (input, dirname) => {
+        this.setDirectDir(dirname);
+        if (fs.existsSync(this.directDir)) {
             fs.writeFileSync(
-                location + "/jdb.json",
+                path.join(this.directDir, "jdb.json"),
                 JSON.stringify(input, null, 4)
             );
         } else {
             return "Database not found";
         }
     };
-    delete = (location) => {
-        if (fs.existsSync(location)) {
-            fs.rmSync(location, { recursive: true });
+    delete = (dirname) => {
+        this.setDirectDir(dirname);
+        if (fs.existsSync(this.directDir)) {
+            fs.rmSync(this.directDir, { recursive: true });
         } else {
             return "Database not found";
         }
     };
-    print = (location) => {
-        if (fs.existsSync(location)) {
-            console.log(JSON.parse(fs.readFileSync(location + "/jdb.json")));
+    print = (dirname) => {
+        this.setDirectDir(dirname);
+        if (fs.existsSync(this.directDir)) {
+            console.log(
+                JSON.parse(
+                    fs.readFileSync(path.join(this.directDir, "jdb.json"))
+                )
+            );
         } else {
             return "Database not found";
         }
