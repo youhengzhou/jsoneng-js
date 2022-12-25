@@ -7,6 +7,9 @@
 /*
  * Current way of using jsoneng
  *
+ * import path from "path";
+ * import jsoneng from "jsoneng";
+ *
  * const dirname = path.join(process.cwd());
  * let jdb = new jsoneng(path.join(dirname, "jdb"));
  *
