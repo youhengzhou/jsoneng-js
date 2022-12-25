@@ -68,24 +68,12 @@ class JDB {
             return "Database not found";
         }
     };
-    u = (key, value, dirname = "") => {
-        this.update({ [key]: value }, dirname);
-    };
     delete = (dirname) => {
         this.setDirectDir(dirname);
         if (fs.existsSync(this.directDir)) {
             fs.rmSync(this.directDir, { recursive: true });
         } else {
             return "Database not found";
-        }
-    };
-    d = (key, dirname = "") => {
-        let prev = this.read(dirname);
-        if (key in prev) {
-            delete prev[key];
-            this.create(prev, dirname);
-        } else {
-            return "Key not found";
         }
     };
     print = (dirname = "") => {
@@ -98,6 +86,37 @@ class JDB {
             );
         } else {
             return "Database not found";
+        }
+    };
+    c = (key, value, dirname = "") => {
+        this.create({ [key]: value }, dirname);
+    };
+    r = (key, dirname = "") => {
+        let prev = this.read(dirname);
+        if (key in prev) {
+            return prev[key];
+        } else {
+            return "Key not found";
+        }
+    };
+    u = (key, value, dirname = "") => {
+        this.update({ [key]: value }, dirname);
+    };
+    d = (key, dirname = "") => {
+        let prev = this.read(dirname);
+        if (key in prev) {
+            delete prev[key];
+            this.create(prev, dirname);
+        } else {
+            return "Key not found";
+        }
+    };
+    p = (key, dirname = "") => {
+        let prev = this.read(dirname);
+        if (key in prev) {
+            console.log({ [key]: prev[key] });
+        } else {
+            return "Key not found";
         }
     };
 }
