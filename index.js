@@ -36,7 +36,11 @@ class JDB {
         if (fs.existsSync(this.directDir)) {
             fs.writeFileSync(
                 path.join(this.directDir, "jdb.json"),
-                JSON.stringify(input, null, 4)
+                JSON.stringify(
+                    Object.assign({}, this.read(dirname), input),
+                    null,
+                    4
+                )
             );
         } else {
             return "Database not found";
