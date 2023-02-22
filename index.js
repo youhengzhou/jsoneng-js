@@ -119,6 +119,29 @@ class JDB {
             return "Key not found";
         }
     };
+    // automatically increment
+    i = (value, dirname = "") => {
+        let prev = this.read(dirname);
+        let highest = Object.keys(prev)
+            .map(Number)
+            .sort((a, b) => b - a)
+            .shift();
+        this.u(Number(highest) + 1, value, dirname);
+    };
+    // automatically increment with description appended
+    l = (desc, value = "", dirname = "") => {
+        if (value) {
+            value = " " + value;
+        }
+        this.i(desc + value, dirname);
+    };
+    // only update for the first instance, useful for loops
+    f = (key, value, dirname = "") => {
+        let prev = this.read(dirname);
+        if (!(key in prev)) {
+            this.u(key, value, dirname);
+        }
+    };
 }
 
 module.exports = JDB;
