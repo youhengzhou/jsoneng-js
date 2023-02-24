@@ -126,6 +126,9 @@ class JDB {
             .map(Number)
             .sort((a, b) => b - a)
             .shift();
+        if (!highest) {
+            highest = -1;
+        }
         this.u(Number(highest) + 1, value, dirname);
     };
     // automatically increment with description appended
