@@ -18,6 +18,6 @@ Create a mock database with character names as the mock generated data
 
 Mock generated data in the created `jdb.json` file
 
-![image](https://user-images.githubusercontent.com/60205850/221281823-69b64bf1-3c41-478e-8ba9-dae3639d42cc.png)
+![image](https://user-images.githubusercontent.com/60205850/221281956-aa474029-1a89-4ecb-84d9-cce504778e02.png)
 
 Feel free to use `npm i jsoneng -U` to use, and I welcome you to leave your thoughts and suggestions on the issues tab!
