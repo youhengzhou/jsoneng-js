@@ -126,7 +126,7 @@ class JDB {
             .map(Number)
             .sort((a, b) => b - a)
             .shift();
-        if (!highest) {
+        if (highest === undefined) {
             highest = -1;
         }
         this.u(Number(highest) + 1, value, dirname);
