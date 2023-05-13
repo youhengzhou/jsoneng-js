@@ -98,6 +98,7 @@ class JDB {
         }
     }
 
+    // Shortened CRUD operations
     async c(key, value, dirname = "") {
         await this.create({ [key]: value }, dirname);
     }
@@ -121,6 +122,7 @@ class JDB {
         }
     }
 
+    // Special operations
     async p(key, dirname = "") {
         const data = await this.read(dirname);
         if (data && data[key]) {
