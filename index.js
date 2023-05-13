@@ -21,14 +21,13 @@
  */
 
 const path = require("path");
-const fs = require("fs");
+const fs = require("fs/promises");
 
 class JDB {
     constructor(baseDir) {
         this.baseDir = baseDir;
     }
 
-    // Private methods
     _getDirectoryPath(dirname) {
         return path.join(this.baseDir, dirname);
     }
@@ -37,37 +36,44 @@ class JDB {
         return path.join(this._getDirectoryPath(dirname), "jdb.json");
     }
 
-    _checkDirectoryExists(dirname) {
-        return fs.existsSync(this._getDirectoryPath(dirname));
-    }
-
-    _createDirectory(dirname) {
-        if (!this._checkDirectoryExists(dirname)) {
-            fs.mkdirSync(this._getDirectoryPath(dirname), { recursive: true });
+    async _checkDirectoryExists(dirname) {
+        try {
+            await fs.access(this._getDirectoryPath(dirname));
+            return true;
+        } catch {
+            return false;
         }
     }
 
-    // Public methods
-    create(input, dirname = "") {
-        this._createDirectory(dirname);
-        fs.writeFileSync(
+    async _createDirectory(dirname) {
+        if (!(await this._checkDirectoryExists(dirname))) {
+            await fs.mkdir(this._getDirectoryPath(dirname), {
+                recursive: true,
+            });
+        }
+    }
+
+    async create(input, dirname = "") {
+        await this._createDirectory(dirname);
+        await fs.writeFile(
             this._getFilePath(dirname),
             JSON.stringify(input, null, 4)
         );
     }
 
-    read(dirname = "") {
-        if (this._checkDirectoryExists(dirname)) {
-            return JSON.parse(fs.readFileSync(this._getFilePath(dirname)));
+    async read(dirname = "") {
+        if (await this._checkDirectoryExists(dirname)) {
+            const data = await fs.readFile(this._getFilePath(dirname));
+            return JSON.parse(data);
         } else {
             return "Database not found";
         }
     }
 
-    update(input, dirname = "") {
-        if (this._checkDirectoryExists(dirname)) {
-            const data = Object.assign({}, this.read(dirname), input);
-            fs.writeFileSync(
+    async update(input, dirname = "") {
+        if (await this._checkDirectoryExists(dirname)) {
+            const data = Object.assign({}, await this.read(dirname), input);
+            await fs.writeFile(
                 this._getFilePath(dirname),
                 JSON.stringify(data, null, 4)
             );
@@ -76,48 +82,47 @@ class JDB {
         }
     }
 
-    delete(dirname) {
-        if (this._checkDirectoryExists(dirname)) {
-            fs.rmSync(this._getDirectoryPath(dirname), { recursive: true });
+    async delete(dirname) {
+        if (await this._checkDirectoryExists(dirname)) {
+            await fs.rm(this._getDirectoryPath(dirname), { recursive: true });
         } else {
             return "Database not found";
         }
     }
 
-    print(dirname = "") {
-        if (this._checkDirectoryExists(dirname)) {
-            console.log(this.read(dirname));
+    async print(dirname = "") {
+        if (await this._checkDirectoryExists(dirname)) {
+            console.log(await this.read(dirname));
         } else {
             return "Database not found";
         }
     }
 
-    // Shortened CRUD operations
-    c(key, value, dirname = "") {
-        this.create({ [key]: value }, dirname);
+    async c(key, value, dirname = "") {
+        await this.create({ [key]: value }, dirname);
     }
 
-    r(key, dirname = "") {
-        const data = this.read(dirname);
+    async r(key, dirname = "") {
+        const data = await this.read(dirname);
         return data && data[key] ? data[key] : "Key not found";
     }
 
-    u(key, value, dirname = "") {
-        this.update({ [key]: value }, dirname);
+    async u(key, value, dirname = "") {
+        await this.update({ [key]: value }, dirname);
     }
 
-    d(key, dirname = "") {
-        const data = this.read(dirname);
+    async d(key, dirname = "") {
+        const data = await this.read(dirname);
         if (data && data[key]) {
             delete data[key];
-            this.create(data, dirname);
+            await this.create(data, dirname);
         } else {
             return "Key not found";
         }
     }
 
-    p(key, dirname = "") {
-        const data = this.read(dirname);
+    async p(key, dirname = "") {
+        const data = await this.read(dirname);
         if (data && data[key]) {
             console.log({ [key]: data[key] });
         } else {
@@ -125,21 +130,20 @@ class JDB {
         }
     }
 
-    // Special operations
-    i(value, dirname = "") {
-        const data = this.read(dirname);
+    async i(value, dirname = "") {
+        const data = await this.read(dirname);
         const highestKey = Math.max(...Object.keys(data).map(Number), -1);
-        this.u(highestKey + 1, value, dirname);
+        await this.u(highestKey + 1, value, dirname);
     }
 
-    l(desc, value = "", dirname = "") {
-        this.i(`${desc} ${value}`, dirname);
+    async l(desc, value = "", dirname = "") {
+        await this.i(`${desc} ${value}`, dirname);
     }
 
-    f(key, value, dirname = "") {
-        const data = this.read(dirname);
+    async f(key, value, dirname = "") {
+        const data = await this.read(dirname);
         if (!data || !data[key]) {
-            this.u(key, value, dirname);
+            await this.u(key, value, dirname);
         }
     }
 }
