@@ -24,8 +24,9 @@ const path = require("path");
 const fs = require("fs/promises");
 
 class JDB {
-    constructor(baseDir) {
+    constructor(baseDir, indent = 4) {
         this.baseDir = baseDir;
+        this.indent = indent;
     }
 
     _getDirectoryPath(dirname) {
@@ -53,18 +54,26 @@ class JDB {
         }
     }
 
+    setIndent(indent) {
+        this.indent = indent;
+    }
+
     async create(input, dirname = "") {
         await this._createDirectory(dirname);
         await fs.writeFile(
             this._getFilePath(dirname),
-            JSON.stringify(input, null, 4)
+            JSON.stringify(input, null, this.indent)
         );
     }
 
     async read(dirname = "") {
         if (await this._checkDirectoryExists(dirname)) {
-            const data = await fs.readFile(this._getFilePath(dirname));
-            return JSON.parse(data);
+            const data = await fs.readFile(this._getFilePath(dirname), "utf-8");
+            try {
+                return JSON.parse(data);
+            } catch (e) {
+                return null;
+            }
         } else {
             return "Database not found";
         }
@@ -72,14 +81,32 @@ class JDB {
 
     async update(input, dirname = "") {
         if (await this._checkDirectoryExists(dirname)) {
-            const data = Object.assign({}, await this.read(dirname), input);
             await fs.writeFile(
                 this._getFilePath(dirname),
-                JSON.stringify(data, null, 4)
+                JSON.stringify(input, null, this.indent)
             );
         } else {
             return "Database not found";
         }
+    }
+
+    async patch(input, dirname = "") {
+        if (await this._checkDirectoryExists(dirname)) {
+            const data = await this.read(dirname);
+            if (data) {
+                const updatedData = { ...data, ...input };
+                await fs.writeFile(
+                    this._getFilePath(dirname),
+                    JSON.stringify(updatedData, null, this.indent)
+                );
+            }
+        } else {
+            return "Database not found";
+        }
+    }
+
+    async patchKV(key, value, dirname = "") {
+        await this.patch({ [key]: value }, dirname);
     }
 
     async delete(dirname) {
