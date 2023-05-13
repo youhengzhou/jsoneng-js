@@ -28,123 +28,120 @@ class JDB {
         this.baseDir = baseDir;
     }
 
-    directDir = "";
-    setDirectDir = (dirname) => {
-        this.directDir = path.join(this.baseDir, dirname);
-    };
+    // Private methods
+    _getDirectoryPath(dirname) {
+        return path.join(this.baseDir, dirname);
+    }
 
-    create = (input, dirname = "") => {
-        this.setDirectDir(dirname);
-        if (!fs.existsSync(this.directDir)) {
-            fs.mkdirSync(this.directDir, { recursive: true });
+    _getFilePath(dirname) {
+        return path.join(this._getDirectoryPath(dirname), "jdb.json");
+    }
+
+    _checkDirectoryExists(dirname) {
+        return fs.existsSync(this._getDirectoryPath(dirname));
+    }
+
+    _createDirectory(dirname) {
+        if (!this._checkDirectoryExists(dirname)) {
+            fs.mkdirSync(this._getDirectoryPath(dirname), { recursive: true });
         }
+    }
+
+    // Public methods
+    create(input, dirname = "") {
+        this._createDirectory(dirname);
         fs.writeFileSync(
-            path.join(this.directDir, "jdb.json"),
+            this._getFilePath(dirname),
             JSON.stringify(input, null, 4)
         );
-    };
-    read = (dirname = "") => {
-        this.setDirectDir(dirname);
-        if (fs.existsSync(this.directDir)) {
-            return JSON.parse(
-                fs.readFileSync(path.join(this.directDir, "jdb.json"))
-            );
+    }
+
+    read(dirname = "") {
+        if (this._checkDirectoryExists(dirname)) {
+            return JSON.parse(fs.readFileSync(this._getFilePath(dirname)));
         } else {
             return "Database not found";
         }
-    };
-    update = (input, dirname = "") => {
-        this.setDirectDir(dirname);
-        if (fs.existsSync(this.directDir)) {
+    }
+
+    update(input, dirname = "") {
+        if (this._checkDirectoryExists(dirname)) {
+            const data = Object.assign({}, this.read(dirname), input);
             fs.writeFileSync(
-                path.join(this.directDir, "jdb.json"),
-                JSON.stringify(
-                    Object.assign({}, this.read(dirname), input),
-                    null,
-                    4
-                )
+                this._getFilePath(dirname),
+                JSON.stringify(data, null, 4)
             );
         } else {
             return "Database not found";
         }
-    };
-    delete = (dirname) => {
-        this.setDirectDir(dirname);
-        if (fs.existsSync(this.directDir)) {
-            fs.rmSync(this.directDir, { recursive: true });
+    }
+
+    delete(dirname) {
+        if (this._checkDirectoryExists(dirname)) {
+            fs.rmSync(this._getDirectoryPath(dirname), { recursive: true });
         } else {
             return "Database not found";
         }
-    };
-    print = (dirname = "") => {
-        this.setDirectDir(dirname);
-        if (fs.existsSync(this.directDir)) {
-            console.log(
-                JSON.parse(
-                    fs.readFileSync(path.join(this.directDir, "jdb.json"))
-                )
-            );
+    }
+
+    print(dirname = "") {
+        if (this._checkDirectoryExists(dirname)) {
+            console.log(this.read(dirname));
         } else {
             return "Database not found";
         }
-    };
-    c = (key, value, dirname = "") => {
+    }
+
+    // Shortened CRUD operations
+    c(key, value, dirname = "") {
         this.create({ [key]: value }, dirname);
-    };
-    r = (key, dirname = "") => {
-        let prev = this.read(dirname);
-        if (key in prev) {
-            return prev[key];
-        } else {
-            return "Key not found";
-        }
-    };
-    u = (key, value, dirname = "") => {
+    }
+
+    r(key, dirname = "") {
+        const data = this.read(dirname);
+        return data && data[key] ? data[key] : "Key not found";
+    }
+
+    u(key, value, dirname = "") {
         this.update({ [key]: value }, dirname);
-    };
-    d = (key, dirname = "") => {
-        let prev = this.read(dirname);
-        if (key in prev) {
-            delete prev[key];
-            this.create(prev, dirname);
+    }
+
+    d(key, dirname = "") {
+        const data = this.read(dirname);
+        if (data && data[key]) {
+            delete data[key];
+            this.create(data, dirname);
         } else {
             return "Key not found";
         }
-    };
-    p = (key, dirname = "") => {
-        let prev = this.read(dirname);
-        if (key in prev) {
-            console.log({ [key]: prev[key] });
+    }
+
+    p(key, dirname = "") {
+        const data = this.read(dirname);
+        if (data && data[key]) {
+            console.log({ [key]: data[key] });
         } else {
             return "Key not found";
         }
-    };
-    // automatically increment
-    i = (value, dirname = "") => {
-        let prev = this.read(dirname);
-        let highest = Object.keys(prev)
-            .map(Number)
-            .sort((a, b) => b - a)
-            .shift();
-        if (highest === undefined) {
-            highest = -1;
-        }
-        this.u(Number(highest) + 1, value, dirname);
-    };
-    // automatically increment with description appended
-    l = (desc, value = "", dirname = "") => {
-        if (value) {
-            value = " " + value;
-        }
-        this.i(desc + value, dirname);
-    };
-    // only update for the first instance, useful for loops
-    f = (key, value, dirname = "") => {
-        let prev = this.read(dirname);
-        if (!(key in prev)) {
+    }
+
+    // Special operations
+    i(value, dirname = "") {
+        const data = this.read(dirname);
+        const highestKey = Math.max(...Object.keys(data).map(Number), -1);
+        this.u(highestKey + 1, value, dirname);
+    }
+
+    l(desc, value = "", dirname = "") {
+        this.i(`${desc} ${value}`, dirname);
+    }
+
+    f(key, value, dirname = "") {
+        const data = this.read(dirname);
+        if (!data || !data[key]) {
             this.u(key, value, dirname);
         }
-    };
+    }
 }
 
 module.exports = JDB;
