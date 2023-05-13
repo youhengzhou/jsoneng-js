@@ -129,88 +129,56 @@ class JDB {
 
     // Shortened CRUD operations
     async c(key, value, dirname = "") {
-        try {
-            await this.create({ [key]: value }, dirname);
-        } catch (error) {
-            throw new Error("Failed to create: " + error.message);
-        }
+        await this.create({ [key]: value }, dirname);
     }
 
     async r(key, dirname = "") {
-        try {
-            const data = await this.read(dirname);
-            if (data && data[key]) {
-                return data[key];
-            } else {
-                throw new Error("Key not found");
-            }
-        } catch (error) {
-            throw new Error("Failed to retrieve data: " + error.message);
+        const data = await this.read(dirname);
+        if (data && data[key]) {
+            return data[key];
+        } else {
+            throw new Error("Key not found");
         }
     }
 
     async u(key, value, dirname = "") {
-        try {
-            await this.update({ [key]: value }, dirname);
-        } catch (error) {
-            throw new Error("Failed to update: " + error.message);
-        }
+        await this.update({ [key]: value }, dirname);
     }
 
     async d(key, dirname = "") {
-        try {
-            const data = await this.read(dirname);
-            if (data && data[key]) {
-                delete data[key];
-                await this.create(data, dirname);
-            } else {
-                throw new Error("Key not found");
-            }
-        } catch (error) {
-            throw new Error("Failed to delete data: " + error.message);
+        const data = await this.read(dirname);
+        if (data && data[key]) {
+            delete data[key];
+            await this.create(data, dirname);
+        } else {
+            throw new Error("Key not found");
         }
     }
 
     // Special operations
     async p(key, dirname = "") {
-        try {
-            const data = await this.read(dirname);
-            if (data && data[key]) {
-                console.log({ [key]: data[key] });
-            } else {
-                throw new Error("Key not found");
-            }
-        } catch (error) {
-            throw new Error("Failed to retrieve data: " + error.message);
+        const data = await this.read(dirname);
+        if (data && data[key]) {
+            console.log({ [key]: data[key] });
+        } else {
+            throw new Error("Key not found");
         }
     }
 
     async i(value, dirname = "") {
-        try {
-            const data = await this.read(dirname);
-            const highestKey = Math.max(...Object.keys(data).map(Number), -1);
-            await this.u(highestKey + 1, value, dirname);
-        } catch (error) {
-            throw new Error("Failed to insert: " + error.message);
-        }
+        const data = await this.read(dirname);
+        const highestKey = Math.max(...Object.keys(data).map(Number), -1);
+        await this.u(highestKey + 1, value, dirname);
     }
 
     async l(desc, value = "", dirname = "") {
-        try {
-            await this.i(`${desc} ${value}`, dirname);
-        } catch (error) {
-            throw new Error("Failed to list: " + error.message);
-        }
+        await this.i(`${desc} ${value}`, dirname);
     }
 
     async f(key, value, dirname = "") {
-        try {
-            const data = await this.read(dirname);
-            if (!data || !data[key]) {
-                await this.u(key, value, dirname);
-            }
-        } catch (error) {
-            throw new Error("Failed to find: " + error.message);
+        const data = await this.read(dirname);
+        if (!data || !data[key]) {
+            await this.u(key, value, dirname);
         }
     }
 }
