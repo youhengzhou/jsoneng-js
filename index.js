@@ -120,13 +120,13 @@ class JDB {
         }
     }
 
-    async patchKV(key, value, dirname = "") {
-        try {
-            await this.patch({ [key]: value }, dirname);
-        } catch (error) {
-            throw new Error("Failed to patch key-value: " + error.message);
-        }
-    }
+    // async patchKV(key, value, dirname = "") {
+    //     try {
+    //         await this.patch({ [key]: value }, dirname);
+    //     } catch (error) {
+    //         throw new Error("Failed to patch key-value: " + error.message);
+    //     }
+    // }
 
     async delete(dirname) {
         if (await this._checkDirectoryExists(dirname)) {
