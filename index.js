@@ -60,15 +60,6 @@ class JDB {
         this.indent = indent;
     }
 
-    // create(input, dirname = "") {
-    //     return this._createDirectory(dirname).then(() => {
-    //         return fs.writeFile(
-    //             this._getFilePath(dirname),
-    //             JSON.stringify(input, null, this.indent)
-    //         );
-    //     });
-    // }
-
     async create(input, dirname = "") {
         try {
             await this._createDirectory(dirname);
@@ -119,14 +110,6 @@ class JDB {
             throw new Error("Database not found");
         }
     }
-
-    // async patchKV(key, value, dirname = "") {
-    //     try {
-    //         await this.patch({ [key]: value }, dirname);
-    //     } catch (error) {
-    //         throw new Error("Failed to patch key-value: " + error.message);
-    //     }
-    // }
 
     async delete(dirname) {
         if (await this._checkDirectoryExists(dirname)) {
