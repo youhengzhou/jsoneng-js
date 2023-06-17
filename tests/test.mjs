@@ -1,5 +1,5 @@
 import * as path from "path";
-import JDB from "jsoneng";
+import JDB from "../index.js";
 
 const dirname = path.join(process.cwd());
 const jdb = new JDB(path.join(dirname, "jdb"));
