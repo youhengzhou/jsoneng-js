@@ -171,11 +171,8 @@ class JDB {
 
   async i(value, dirname = "") {
     const data = await this.read(dirname);
-    let highestKey = -1;
-    if (data) {
-      highestKey = Math.max(...Object.keys(data).map(Number), -1);
-    }
-    await this.u(highestKey + 1, value, dirname);
+    const highestKey = Math.max(...Object.keys(data).map(Number), -1);
+    await this.p(highestKey + 1, value, dirname);
   }
 
   async l(desc, value = "", dirname = "") {
