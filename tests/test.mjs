@@ -1,8 +1,8 @@
 import * as path from "path";
-import JDB from "../index.js";
+import jsoneng from "../index.js";
 
 const dirname = path.join(process.cwd());
-const jdb = new JDB(path.join(dirname, "jdb"));
+const jdb = new jsoneng.JDB(path.join(dirname, "jdb"));
 
 function runTests() {
   // Helper function to check if two objects are deeply equal
