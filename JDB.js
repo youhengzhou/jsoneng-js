@@ -5,6 +5,7 @@ class JDB {
   constructor(baseDir, indent = 4) {
     this.baseDir = baseDir;
     this.indent = indent;
+    this.queue = Promise.resolve();
   }
 
   _getDirectoryPath(dirname) {
@@ -73,18 +74,21 @@ class JDB {
   }
 
   async patch(input, dirname = "") {
-    if (await this._checkDirectoryExists(dirname)) {
-      const data = await this.read(dirname);
-      if (data) {
-        const updatedData = { ...data, ...input };
-        await fs.writeFile(
-          this._getFilePath(dirname),
-          JSON.stringify(updatedData, null, this.indent)
-        );
+    this.queue = this.queue.then(async () => {
+      if (await this._checkDirectoryExists(dirname)) {
+        const data = await this.read(dirname);
+        if (data) {
+          const updatedData = { ...data, ...input };
+          await fs.writeFile(
+            this._getFilePath(dirname),
+            JSON.stringify(updatedData, null, this.indent)
+          );
+        }
+      } else {
+        throw new Error("Database not found");
       }
-    } else {
-      throw new Error("Database not found");
-    }
+    });
+    return this.queue;
   }
 
   async delete(dirname) {
